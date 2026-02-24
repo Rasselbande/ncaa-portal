@@ -13,8 +13,9 @@ COLUMN_LABELS = {
     "TIER_LEVEL":  "Tier",
     "POS_GROUP":   "Position",
     "CONFERENCE":  "Conf",
+    "ARCHETYPE":   "Style",
     "3P%":         "3FG%",
-    "3PATR":       "3PAR",
+    "HT":          "HT",
 }
 
 st.set_page_config(
@@ -36,23 +37,28 @@ def load_data():
 
 df = load_data()
 
+# Capitalize position
+df["POS_GROUP"] = df["POS_GROUP"].str.capitalize()
+
 # ==============================
 # SIDEBAR FILTERS
 # ==============================
 
 st.sidebar.header("Filters")
 
+# Portal toggle on top
 portal_only = st.sidebar.toggle("Portal players only", value=True)
 
 st.sidebar.markdown("---")
 
 base_df = df[df["PORTAL"] == 1].copy() if portal_only else df.copy()
 
-conf_options = sorted(base_df["CONFERENCE"].dropna().unique())
-conf_select  = st.sidebar.multiselect("Conference", conf_options)
-
+# ── Dropdowns: Tier, Conference, Position, Role ───────────────────
 tier_options = sorted(base_df["TIER_LEVEL"].dropna().unique())
 tier_select  = st.sidebar.multiselect("Tier", tier_options)
+
+conf_options = sorted(base_df["CONFERENCE"].dropna().unique())
+conf_select  = st.sidebar.multiselect("Conference", conf_options)
 
 pos_options  = sorted(base_df["POS_GROUP"].dropna().unique())
 pos_select   = st.sidebar.multiselect("Position", pos_options)
@@ -62,27 +68,23 @@ role_select  = st.sidebar.multiselect("Role", role_options)
 
 st.sidebar.markdown("---")
 
-# 3P% stored as decimal 0.0–1.0
+# ── Sliders: 3PA, 3FG%, MPG, PPG ─────────────────────────────────
+min_3pa = st.sidebar.slider(
+    "Min 3PA (per game)",
+    0.0, float(base_df["3PA"].max()), 1.0, 0.5
+)
+
 min_3p = st.sidebar.slider(
     "Min 3FG%", 0, 100, 30, 1,
-    help="Minimum three-point shooting percentage"
+    help="Three-point shooting percentage"
 ) / 100.0
 
-min_3pa = st.sidebar.slider(
-    "Min 3PA (per game)", 0.0,
-    float(base_df["3PA"].max()), 1.0, 0.5,
-    help="Minimum three-point attempts per game"
-)
-
-min_3patr = st.sidebar.slider(
-    "Min 3PAR (attempt rate)", 0.0,
-    float(base_df["3PATR"].max()), 10.0, 1.0,
-    help="Minimum share of shots that are threes"
-)
-
 min_mpg = st.sidebar.slider(
-    "Min MPG", 0.0,
-    float(base_df["MPG"].max()), 10.0, 1.0
+    "Min MPG", 0.0, float(base_df["MPG"].max()), 10.0, 1.0
+)
+
+min_ppg = st.sidebar.slider(
+    "Min PPG", 0.0, float(base_df["PPG"].max()), 0.0, 0.5
 )
 
 # ==============================
@@ -91,20 +93,20 @@ min_mpg = st.sidebar.slider(
 
 filtered = base_df.copy()
 
-if conf_select:
-    filtered = filtered[filtered["CONFERENCE"].isin(conf_select)]
 if tier_select:
     filtered = filtered[filtered["TIER_LEVEL"].isin(tier_select)]
+if conf_select:
+    filtered = filtered[filtered["CONFERENCE"].isin(conf_select)]
 if pos_select:
     filtered = filtered[filtered["POS_GROUP"].isin(pos_select)]
 if role_select:
     filtered = filtered[filtered["ROLE"].isin(role_select)]
 
 filtered = filtered[
-    (filtered["3P%"]   >= min_3p)    &
-    (filtered["3PA"]   >= min_3pa)   &
-    (filtered["3PATR"] >= min_3patr) &
-    (filtered["MPG"]   >= min_mpg)
+    (filtered["3PA"]  >= min_3pa) &
+    (filtered["3P%"]  >= min_3p)  &
+    (filtered["MPG"]  >= min_mpg) &
+    (filtered["PPG"]  >= min_ppg)
 ]
 
 filtered = filtered.sort_values("3P%", ascending=False)
@@ -113,7 +115,7 @@ filtered = filtered.sort_values("3P%", ascending=False)
 # HEADER
 # ==============================
 
-st.title("🎯 Shooter Scout")
+st.title("🏀 Shooting Board")
 st.markdown("Find the best shooters in the Transfer Portal — filter by volume, efficiency, and role.")
 st.markdown("---")
 
@@ -122,9 +124,9 @@ st.markdown("---")
 # ==============================
 
 display_cols = [
-    "Player", "CLASS", "POS_GROUP", "Team", "CONFERENCE",
+    "Player", "CLASS", "HT", "POS_GROUP", "Team", "CONFERENCE",
     "TIER_LEVEL", "ROLE",
-    "MPG", "PPG", "3PA", "3PM", "3P%",
+    "MPG", "PPG", "3PM", "3PA", "3P%",
 ]
 display_cols = [c for c in display_cols if c in filtered.columns]
 
@@ -134,11 +136,11 @@ st.dataframe(
     filtered[display_cols]
     .rename(columns=COLUMN_LABELS)
     .style.format({
-        "MPG":  "{:.1f}",
-        "PPG":  "{:.1f}",
-        "3PA":  "{:.1f}",
-        "3PM":  "{:.1f}",
-        "3FG%": "{:.1%}",
+        "MPG":   "{:.1f}",
+        "PPG":   "{:.1f}",
+        "3PA":   "{:.1f}",
+        "3PM":   "{:.1f}",
+        "3FG%":  "{:.1%}",
     }),
     use_container_width=True,
     hide_index=True
@@ -151,5 +153,6 @@ st.dataframe(
 st.markdown("---")
 st.caption(
     "3FG% = three-point shooting percentage | "
-    "3PAR = share of all shots that are threes"
+    "3PA = three-point attempts per game | "
+    "3PM = three-pointers made per game"
 )
