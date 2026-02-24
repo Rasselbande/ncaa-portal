@@ -94,6 +94,20 @@ with st.expander("ℹ️ How does the Rank work?"):
 **Role vs Rank** — Role describes how a team uses a player based on minutes and usage thresholds. Rank scores what the stats show after adjusting for competition level. A Role Player can rank very highly if his per-minute production is elite. Use Role to understand function — use Rank to compare value across the full dataset.
     """)
 
+with st.expander("ℹ️ How are Tiers defined?"):
+    st.markdown("""
+Tiers group conferences by competitive level based on NCAA tournament performance, NET rankings, and KenPom data. Each tier carries a different weight in the Rank formula.
+
+| Tier | Level | Conferences | Logic |
+|------|-------|-------------|-------|
+| 1 | Power 5 | ACC, B10, B12, Big East, SEC | Consistently rank in the top 5 of NET and KenPom. Receive the vast majority of at-large bids. |
+| 2 | High-Major | A-10, AAC, MVC, MWC, WCC | At-large threats that regularly earn 2–4 tournament bids. Often rank ahead of individual Power 5 teams in efficiency. |
+| 3 | Mid-Major | BWC, CAA, C-USA, IVY, MAC, OVC, Sun Belt, WAC | Solid conferences with 1–2 dominant teams that are dangerous in the first round but usually only get 1 bid. |
+| 4 | Low-Major | AEC, A-Sun, BSky, BSC, Horizon, MAAC, MEAC, NEC, Patriot, SLC, SoCon, Summit, SWC, SWAC | Primarily one-bid leagues. Statistically these conferences occupy the bottom third of NET rankings. |
+
+Production stats for players in lower tiers are discounted in the Rank formula to reflect the difference in competition level.
+    """)
+
 # ==============================
 # PORTAL ONLY
 # ==============================
