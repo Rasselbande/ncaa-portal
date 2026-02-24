@@ -1,11 +1,11 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Player Guide – NCAA Portal",
+    page_title="Roles & Styles – NCAA Portal",
     layout="wide"
 )
 
-st.title("📖 Player Guide")
+st.title("🏀 Roles & Styles")
 st.markdown("Reference for all **Roles** and **Styles** used in this dashboard.")
 st.markdown("---")
 
