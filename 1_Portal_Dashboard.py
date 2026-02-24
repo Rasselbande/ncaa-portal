@@ -75,19 +75,23 @@ st.markdown("### Top Portal Players")
 
 with st.expander("ℹ️ How does the Rank work?"):
     st.markdown("""
-**Rank is a percentile score (0–100) that measures overall player value across four components — with a conference-level adjustment applied.**
+**Rank is a percentile score (0–100) that measures overall player value across four components. Conference level is baked into the production numbers before scoring begins.**
 
-**Production (35%)** — Scoring, rebounding, assists, and minutes. Captures how much a player contributes on the stat sheet.
+**Production (35%)** — Scoring, rebounding, assists, and minutes — adjusted for conference level before scoring. A player's raw stats are multiplied by a conference weight so that production in stronger leagues carries more value. Two players with identical raw numbers will score differently if they play in different conferences.
 
-**Efficiency (30%)** — True shooting percentage, Player Efficiency Rating, and AST/TO ratio. Measures how well a player produces relative to his opportunities. AST/TO captures both playmaking ability and turnover risk in a single number — a higher ratio means more value creation with fewer mistakes.
+**Efficiency (30%)** — True shooting percentage, Player Efficiency Rating, and AST/TO ratio. Measures how well a player produces relative to his opportunities. AST/TO captures both playmaking and turnover risk in a single number — a higher ratio means more value with fewer mistakes.
 
-**Defense (15%)** — Steal rate, block rate, and total rebound rate. Reflects defensive activity and presence.
+**Defense (15%)** — Steal rate, block rate, and total rebound rate. Reflects defensive activity and presence on both the perimeter and at the rim.
 
-**Context (20%)** — Role value and tier level. A player who carries a heavy load at a high level scores higher on context than a bench player at a lower tier.
+**Context (20%)** — Role value and tier level. A player carrying a heavy load at a high level scores higher than a bench player at a lower tier. This component rewards players who are trusted by their coaching staff and play meaningful minutes in competitive environments.
 
-**Conference multiplier** — All scores are adjusted by the level of competition the player faces. A Power 5 player's score is not discounted. Mid-Major and Low-Major scores are adjusted downward to reflect the difference in competition level. This means two players with identical raw stats will rank differently if they play in different conferences — which is intentional.
+**Conference weights applied to production:**
+- Power 5: full value
+- High-Major: 88%
+- Mid-Major: 76%
+- Low-Major: 58%
 
-**Role vs Rank** — these measure different things. Role describes how a team uses a player based on minutes and usage thresholds. Rank scores what the stats actually show. A player can be labeled a Role Player but rank very highly if his per-minute production is elite. Use Role to understand a player's function — use Rank to compare value across the full dataset.
+**Role vs Rank** — Role describes how a team uses a player based on minutes and usage thresholds. Rank scores what the stats show after adjusting for competition level. A Role Player can rank very highly if his per-minute production is elite. Use Role to understand function — use Rank to compare value across the full dataset.
     """)
 
 # ==============================
