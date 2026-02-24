@@ -122,12 +122,6 @@ role_select  = st.sidebar.multiselect("Role", role_options)
 arch_options = sorted(portal_df["ARCHETYPE"].dropna().unique())
 arch_select  = st.sidebar.multiselect("Style", arch_options)
 
-st.sidebar.markdown("---")
-
-# ── Sliders ───────────────────────────────────────────────────────
-min_ppg = st.sidebar.slider(
-    "Minimum PPG", 0.0, float(portal_df["PPG"].max()), 10.0, 0.5
-)
 ht_options = {
     "Any": 0,
     "6-0+": 72, "6-1+": 73, "6-2+": 74, "6-3+": 75,
@@ -137,6 +131,14 @@ ht_options = {
 }
 ht_select = st.sidebar.selectbox("Minimum Height", list(ht_options.keys()))
 min_ht = ht_options[ht_select]
+
+st.sidebar.markdown("---")
+
+# ── Sliders ───────────────────────────────────────────────────────
+min_ppg = st.sidebar.slider(
+    "Minimum PPG", 0.0, float(portal_df["PPG"].max()), 0.0, 0.5
+)
+
 min_mpg = st.sidebar.slider(
     "Minimum MPG", 0.0, float(portal_df["MPG"].max()), 0.0, 0.5
 )
@@ -147,7 +149,7 @@ min_apg = st.sidebar.slider(
     "Minimum APG", 0.0, float(portal_df["APG"].max()), 0.0, 0.5
 )
 min_impact = st.sidebar.slider(
-    "Minimum Rank", 0.0, 100.0, 50.0, 1.0
+    "Minimum Rank", 0.0, 100.0, 0.0, 1.0
 )
 
 # ==============================
