@@ -18,6 +18,7 @@ COLUMN_LABELS = {
     "ARCHETYPE":           "Style",
     "CLASS":               "Class",
     "ROLE":                "Role",
+    "HT":                  "HT",
 }
 
 st.set_page_config(
@@ -36,12 +37,10 @@ thead tr th {
 tbody tr td {
     text-align: center !important;
 }
-/* Left-align player name (first col) */
 tbody tr td:first-child {
     text-align: left !important;
     font-weight: 500;
 }
-/* Right-align Rank (last col) */
 tbody tr td:last-child {
     text-align: right !important;
 }
@@ -105,11 +104,12 @@ portal_df = df[df["PORTAL"] == 1].copy()
 
 st.sidebar.header("Filters")
 
-conf_options = sorted(portal_df["CONFERENCE"].dropna().unique())
-conf_select  = st.sidebar.multiselect("Conference", conf_options)
-
+# ── Dropdowns: Tier, Conference, Position, Role, Style ────────────
 tier_options = sorted(portal_df["TIER_LEVEL"].dropna().unique())
 tier_select  = st.sidebar.multiselect("Tier", tier_options)
+
+conf_options = sorted(portal_df["CONFERENCE"].dropna().unique())
+conf_select  = st.sidebar.multiselect("Conference", conf_options)
 
 pos_options  = sorted(portal_df["POS_GROUP"].dropna().unique())
 pos_select   = st.sidebar.multiselect("Position", pos_options)
@@ -120,8 +120,27 @@ role_select  = st.sidebar.multiselect("Role", role_options)
 arch_options = sorted(portal_df["ARCHETYPE"].dropna().unique())
 arch_select  = st.sidebar.multiselect("Style", arch_options)
 
+st.sidebar.markdown("---")
+
+# ── Sliders ───────────────────────────────────────────────────────
 min_ppg = st.sidebar.slider(
     "Minimum PPG", 0.0, float(portal_df["PPG"].max()), 10.0, 0.5
+)
+min_ht = st.sidebar.slider(
+    "Minimum HT (inches)", 
+    int(portal_df["HT"].min()) if "HT" in portal_df.columns else 60,
+    int(portal_df["HT"].max()) if "HT" in portal_df.columns else 90,
+    int(portal_df["HT"].min()) if "HT" in portal_df.columns else 60,
+    1
+)
+min_mpg = st.sidebar.slider(
+    "Minimum MPG", 0.0, float(portal_df["MPG"].max()), 0.0, 0.5
+)
+min_rpg = st.sidebar.slider(
+    "Minimum RPG", 0.0, float(portal_df["RPG"].max()), 0.0, 0.5
+)
+min_apg = st.sidebar.slider(
+    "Minimum APG", 0.0, float(portal_df["APG"].max()), 0.0, 0.5
 )
 min_impact = st.sidebar.slider(
     "Minimum Rank", 0.0, 100.0, 50.0, 1.0
@@ -133,10 +152,10 @@ min_impact = st.sidebar.slider(
 
 filtered = portal_df.copy()
 
-if conf_select:
-    filtered = filtered[filtered["CONFERENCE"].isin(conf_select)]
 if tier_select:
     filtered = filtered[filtered["TIER_LEVEL"].isin(tier_select)]
+if conf_select:
+    filtered = filtered[filtered["CONFERENCE"].isin(conf_select)]
 if pos_select:
     filtered = filtered[filtered["POS_GROUP"].isin(pos_select)]
 if role_select:
@@ -146,8 +165,14 @@ if arch_select:
 
 filtered = filtered[
     (filtered["PPG"] >= min_ppg) &
+    (filtered["MPG"] >= min_mpg) &
+    (filtered["RPG"] >= min_rpg) &
+    (filtered["APG"] >= min_apg) &
     (filtered["PORTAL_IMPACT_SCORE"] >= min_impact)
 ]
+
+if "HT" in filtered.columns:
+    filtered = filtered[filtered["HT"] >= min_ht]
 
 filtered = filtered.sort_values(
     ["PORTAL_IMPACT_SCORE", "PPG"], ascending=False
@@ -158,15 +183,26 @@ filtered = filtered.sort_values(
 # ==============================
 
 display_cols = [
-    "Player", "CLASS", "POS_GROUP", "Team", "CONFERENCE",
+    "Player", "CLASS", "HT", "POS_GROUP", "Team", "CONFERENCE",
     "TIER_LEVEL", "ROLE", "ARCHETYPE",
-    "MPG", "PPG", "RPG", "APG",
+    "MPG", "PPG", "HT", "RPG", "APG",
     "PORTAL_IMPACT_SCORE",
 ]
-display_cols = [c for c in display_cols if c in filtered.columns]
+# Remove duplicate HT and missing cols
+seen = set()
+clean_cols = []
+for c in display_cols:
+    if c not in seen and c in filtered.columns:
+        seen.add(c)
+        clean_cols.append(c)
+
+# Put HT right after CLASS
+final_cols = []
+for c in clean_cols:
+    final_cols.append(c)
 
 st.dataframe(
-    filtered[display_cols]
+    filtered[final_cols]
     .rename(columns=COLUMN_LABELS)
     .style.format({
         "MPG":  "{:.1f}",
@@ -185,6 +221,7 @@ st.dataframe(
         "PPG":      st.column_config.NumberColumn("PPG",    width="small"),
         "RPG":      st.column_config.NumberColumn("RPG",    width="small"),
         "APG":      st.column_config.NumberColumn("APG",    width="small"),
+        "HT":       st.column_config.NumberColumn("HT",     width="small"),
         "Class":    st.column_config.TextColumn("Class",    width="small"),
         "Position": st.column_config.TextColumn("Position", width="small"),
         "Team":     st.column_config.TextColumn("Team",     width="small"),
