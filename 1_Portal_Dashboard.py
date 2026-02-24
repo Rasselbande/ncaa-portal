@@ -128,11 +128,15 @@ st.sidebar.markdown("---")
 min_ppg = st.sidebar.slider(
     "Minimum PPG", 0.0, float(portal_df["PPG"].max()), 10.0, 0.5
 )
-if "HT" in portal_df.columns:
-    ht_numeric = pd.to_numeric(portal_df["HT"], errors="coerce").dropna()
-    if len(ht_numeric) > 0:
-        ht_min = int(ht_numeric.min())
-        ht_max = int(ht_numeric.max())
+ht_options = {
+    "Any": 0,
+    "6-0+": 72, "6-1+": 73, "6-2+": 74, "6-3+": 75,
+    "6-4+": 76, "6-5+": 77, "6-6+": 78, "6-7+": 79,
+    "6-8+": 80, "6-9+": 81, "6-10+": 82, "6-11+": 83,
+    "7-0+": 84,
+}
+ht_select = st.sidebar.selectbox("Minimum Height", list(ht_options.keys()))
+min_ht = ht_options[ht_select]
         
     else:
         min_ht = 0
