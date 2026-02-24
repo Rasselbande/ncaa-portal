@@ -64,6 +64,17 @@ df = load_data()
 # Capitalize position values for cleaner display
 df["POS_GROUP"] = df["POS_GROUP"].str.capitalize()
 
+# Convert HT to numeric inches if not already done in notebook
+if "HT" in df.columns and df["HT"].dtype == object:
+    def ht_to_inches(ht):
+        try:
+            feet, inches = str(ht).split('-')
+            return int(feet) * 12 + int(inches)
+        except:
+            return None
+    df["HT_display"] = df["HT"]
+    df["HT"] = df["HT"].apply(ht_to_inches)
+
 # ==============================
 # HEADER
 # ==============================
@@ -126,10 +137,14 @@ st.sidebar.markdown("---")
 min_ppg = st.sidebar.slider(
     "Minimum PPG", 0.0, float(portal_df["PPG"].max()), 10.0, 0.5
 )
-if "HT" in portal_df.columns and portal_df["HT"].notna().any():
-    ht_min = int(portal_df["HT"].dropna().min())
-    ht_max = int(portal_df["HT"].dropna().max())
-    min_ht = st.sidebar.slider("Minimum HT (inches)", ht_min, ht_max, ht_min, 1)
+if "HT" in portal_df.columns:
+    ht_numeric = pd.to_numeric(portal_df["HT"], errors="coerce").dropna()
+    if len(ht_numeric) > 0:
+        ht_min = int(ht_numeric.min())
+        ht_max = int(ht_numeric.max())
+        min_ht = st.sidebar.slider("Minimum HT (inches)", ht_min, ht_max, ht_min, 1)
+    else:
+        min_ht = 0
 else:
     min_ht = 0
 min_ht = 0
@@ -170,8 +185,9 @@ filtered = filtered[
     (filtered["APG"] >= min_apg) &
     (filtered["PORTAL_IMPACT_SCORE"] >= min_impact)
 ]
-if "HT" in filtered.columns:
-    filtered = filtered[filtered["HT"].isna() | (filtered["HT"] >= min_ht)]
+if "HT" in filtered.columns and min_ht > 0:
+    ht_num = pd.to_numeric(filtered["HT"], errors="coerce")
+    filtered = filtered[ht_num.isna() | (ht_num >= min_ht)]
 
 
 
