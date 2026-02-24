@@ -75,23 +75,19 @@ st.markdown("### Top Portal Players")
 
 with st.expander("ℹ️ How does the Rank work?"):
     st.markdown("""
-**Rank is a percentile score (0–100) based on raw stats — not on Role.**
+**Rank is a percentile score (0–100) that measures overall player value across four components — with a conference-level adjustment applied.**
 
-It measures four components across all players in the dataset:
+**Production (35%)** — Scoring, rebounding, assists, and minutes. Captures how much a player contributes on the stat sheet.
 
-- **Production (40%)** — PPG, RPG, APG, MPG
-- **Efficiency (30%)** — TS%, PER, TOV%
-- **Defense (15%)** — STL%, BLK%, TRB%
-- **Context (15%)** — Role value, Tier level
+**Efficiency (30%)** — True shooting percentage, Player Efficiency Rating, and AST/TO ratio. Measures how well a player produces relative to his opportunities. AST/TO captures both playmaking ability and turnover risk in a single number — a higher ratio means more value creation with fewer mistakes.
 
-A player ranked 99.9 is in the top 0.1% of all 3,000+ players by this combined score.
+**Defense (15%)** — Steal rate, block rate, and total rebound rate. Reflects defensive activity and presence.
 
-**Why can a Role Player rank higher than an Impact Player?**
-Role and Rank measure different things. Role is assigned by fixed thresholds based on MPG and USG%. A player can fall just under those cutoffs but still produce elite numbers when on the court.
+**Context (20%)** — Role value and tier level. A player who carries a heavy load at a high level scores higher on context than a bench player at a lower tier.
 
-Oscar Cluff is a good example: 17.6 PPG, 12.3 RPG, and a 36.2 PER as a Big puts him in the top 0.1% of all players regardless of role label. Rank rewards what the stats say — Role describes how the team uses the player.
+**Conference multiplier** — All scores are adjusted by the level of competition the player faces. A Power 5 player's score is not discounted. Mid-Major and Low-Major scores are adjusted downward to reflect the difference in competition level. This means two players with identical raw stats will rank differently if they play in different conferences — which is intentional.
 
-**In short:** use Role to understand a player's function. Use Rank to compare production across the whole dataset.
+**Role vs Rank** — these measure different things. Role describes how a team uses a player based on minutes and usage thresholds. Rank scores what the stats actually show. A player can be labeled a Role Player but rank very highly if his per-minute production is elite. Use Role to understand a player's function — use Rank to compare value across the full dataset.
     """)
 
 # ==============================
