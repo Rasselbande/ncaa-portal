@@ -222,7 +222,7 @@ final_cols = []
 for c in clean_cols:
     final_cols.append(c)
 
-st.dataframe(
+selection = st.dataframe(
     filtered[final_cols]
     .rename(columns=COLUMN_LABELS)
     .style.format({
@@ -234,6 +234,8 @@ st.dataframe(
     }),
     use_container_width=True,
     hide_index=True,
+    on_select="rerun",
+    selection_mode="single-row",
     column_config={
         "Player":   st.column_config.TextColumn("Player",   width="medium"),
         "Style":    st.column_config.TextColumn("Style",    width="medium"),
@@ -251,6 +253,73 @@ st.dataframe(
         "Role":     st.column_config.TextColumn("Role",     width="small"),
     }
 )
+
+# ── PLAYER CARD ───────────────────────────────────────────────────
+selected_rows = selection.selection.rows if selection.selection.rows else []
+if selected_rows:
+    idx = filtered.iloc[selected_rows[0]]
+    
+    def fmt(val, dec=1):
+        try: return f"{float(val):.{dec}f}"
+        except: return "—"
+
+    portal_status = "✅ In Portal" if idx.get("PORTAL", 0) == 1 else "❌ Not in Portal"
+    
+    st.markdown("---")
+    st.markdown(f"""
+<div style="background:#f8f9fa;border:1px solid #dee2e6;border-radius:10px;padding:20px;margin-top:10px;">
+    <div style="font-size:22px;font-weight:700;margin-bottom:4px;">{idx.get("Player","—")}</div>
+    <div style="color:#666;font-size:13px;margin-bottom:16px;">
+        {idx.get("Team","—")} &nbsp;|&nbsp; {idx.get("CONFERENCE","—")} &nbsp;|&nbsp; 
+        {idx.get("TIER_LEVEL","—")} &nbsp;|&nbsp; {idx.get("CLASS","—")} &nbsp;|&nbsp; 
+        {idx.get("HT_display", idx.get("HT","—"))} &nbsp;|&nbsp; {portal_status}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;">
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">Role</div>
+            <div style="font-size:15px;font-weight:600;">{idx.get("ROLE","—")}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">Position</div>
+            <div style="font-size:15px;font-weight:600;">{idx.get("POS_GROUP","—")}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">Style</div>
+            <div style="font-size:15px;font-weight:600;">{idx.get("ARCHETYPE","—")}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">Rank</div>
+            <div style="font-size:15px;font-weight:600;">{fmt(idx.get("PORTAL_IMPACT_SCORE","—"))}</div>
+        </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;">
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">PPG</div>
+            <div style="font-size:18px;font-weight:700;">{fmt(idx.get("PPG"))}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">RPG</div>
+            <div style="font-size:18px;font-weight:700;">{fmt(idx.get("RPG"))}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">APG</div>
+            <div style="font-size:18px;font-weight:700;">{fmt(idx.get("APG"))}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">MPG</div>
+            <div style="font-size:18px;font-weight:700;">{fmt(idx.get("MPG"))}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">PER</div>
+            <div style="font-size:18px;font-weight:700;">{fmt(idx.get("PER"))}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">TS%</div>
+            <div style="font-size:18px;font-weight:700;">{fmt(idx.get("TS%"))}%</div>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ==============================
 # FOOTER
