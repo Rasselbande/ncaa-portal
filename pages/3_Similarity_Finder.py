@@ -9,7 +9,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 # CONFIG
 # ==============================
 
-DB_PATH    = "/Users/phil/ncaa_portal/data/portal.db"
+DB_PATH    = "data/portal.db"
 TABLE_NAME = "portal_players"
 
 SIM_FEATURES = [
@@ -44,7 +44,6 @@ def load_data():
     df.columns = df.columns.str.strip().str.replace("-", "_")
     return df
 
-@st.cache_data
 def build_similarity_matrix(df):
     features = [f for f in SIM_FEATURES if f in df.columns]
     df_sim = df.dropna(subset=features).copy().reset_index(drop=True)
