@@ -6,7 +6,7 @@ import sqlite3
 # CONFIG
 # ==============================
 
-DB_PATH    = "/Users/phil/ncaa_portal/data/portal.db"
+DB_PATH    = "data/portal.db"
 TABLE_NAME = "portal_players"
 
 COLUMN_LABELS = {
@@ -124,7 +124,7 @@ st.markdown("---")
 display_cols = [
     "Player", "CLASS", "POS_GROUP", "Team", "CONFERENCE",
     "TIER_LEVEL", "ROLE",
-    "MPG", "PPG", "3PM", "3PA", "3P%",
+    "MPG", "PPG", "3PA", "3PM", "3P%",
 ]
 display_cols = [c for c in display_cols if c in filtered.columns]
 

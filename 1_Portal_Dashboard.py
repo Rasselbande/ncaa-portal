@@ -6,7 +6,7 @@ import sqlite3
 # CONFIG
 # ==============================
 
-DB_PATH    = "/Users/phil/ncaa_portal/data/portal.db"
+DB_PATH    = "data/portal.db"
 TABLE_NAME = "portal_players"
 
 COLUMN_LABELS = {
