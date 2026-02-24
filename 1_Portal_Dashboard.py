@@ -64,16 +64,7 @@ df = load_data()
 # Capitalize position values for cleaner display
 df["POS_GROUP"] = df["POS_GROUP"].str.capitalize()
 
-# Convert HT to numeric inches if not already done in notebook
-if "HT" in df.columns and df["HT"].dtype == object:
-    def ht_to_inches(ht):
-        try:
-            feet, inches = str(ht).split('-')
-            return int(feet) * 12 + int(inches)
-        except:
-            return None
-    df["HT_display"] = df["HT"]
-    df["HT"] = df["HT"].apply(ht_to_inches)
+
 
 # ==============================
 # HEADER
@@ -202,7 +193,7 @@ filtered = filtered.sort_values(
 display_cols = [
     "Player", "CLASS", "HT_display", "POS_GROUP", "Team", "CONFERENCE",
     "TIER_LEVEL", "ROLE", "ARCHETYPE",
-    "MPG", "PPG", "HT", "RPG", "APG",
+    "MPG", "PPG", "RPG", "APG",
     "PORTAL_IMPACT_SCORE",
 ]
 # Remove duplicate HT and missing cols
