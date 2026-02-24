@@ -133,7 +133,7 @@ if "HT" in portal_df.columns:
     if len(ht_numeric) > 0:
         ht_min = int(ht_numeric.min())
         ht_max = int(ht_numeric.max())
-        min_ht = st.sidebar.slider("Minimum HT (inches)", ht_min, ht_max, ht_min, 1)
+        
     else:
         min_ht = 0
 else:
