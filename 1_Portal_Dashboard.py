@@ -137,12 +137,6 @@ ht_options = {
 }
 ht_select = st.sidebar.selectbox("Minimum Height", list(ht_options.keys()))
 min_ht = ht_options[ht_select]
-        
-    else:
-        min_ht = 0
-else:
-    min_ht = 0
-min_ht = 0
 min_mpg = st.sidebar.slider(
     "Minimum MPG", 0.0, float(portal_df["MPG"].max()), 0.0, 0.5
 )
@@ -180,10 +174,8 @@ filtered = filtered[
     (filtered["APG"] >= min_apg) &
     (filtered["PORTAL_IMPACT_SCORE"] >= min_impact)
 ]
-if "HT" in filtered.columns:
-    filtered = filtered[
-        filtered["HT"].isna() | (pd.to_numeric(filtered["HT"], errors="coerce") >= min_ht)
-    ]
+if "HT" in filtered.columns and min_ht > 0:
+    filtered = filtered[filtered["HT"].isna() | (filtered["HT"] >= min_ht)]
 
 
 
