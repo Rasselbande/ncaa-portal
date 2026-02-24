@@ -176,9 +176,10 @@ filtered = filtered[
     (filtered["APG"] >= min_apg) &
     (filtered["PORTAL_IMPACT_SCORE"] >= min_impact)
 ]
-if "HT" in filtered.columns and min_ht > 0:
-    ht_num = pd.to_numeric(filtered["HT"], errors="coerce")
-    filtered = filtered[ht_num.isna() | (ht_num >= min_ht)]
+if "HT" in filtered.columns:
+    filtered = filtered[
+        filtered["HT"].isna() | (pd.to_numeric(filtered["HT"], errors="coerce") >= min_ht)
+    ]
 
 
 
