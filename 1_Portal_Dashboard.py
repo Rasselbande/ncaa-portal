@@ -18,7 +18,7 @@ COLUMN_LABELS = {
     "ARCHETYPE":           "Style",
     "CLASS":               "Class",
     "ROLE":                "Role",
-    "HT":                  "HT",
+    "HT_display":          "HT",
 }
 
 st.set_page_config(
@@ -126,6 +126,12 @@ st.sidebar.markdown("---")
 min_ppg = st.sidebar.slider(
     "Minimum PPG", 0.0, float(portal_df["PPG"].max()), 10.0, 0.5
 )
+if "HT" in portal_df.columns and portal_df["HT"].notna().any():
+    ht_min = int(portal_df["HT"].dropna().min())
+    ht_max = int(portal_df["HT"].dropna().max())
+    min_ht = st.sidebar.slider("Minimum HT (inches)", ht_min, ht_max, ht_min, 1)
+else:
+    min_ht = 0
 min_ht = 0
 min_mpg = st.sidebar.slider(
     "Minimum MPG", 0.0, float(portal_df["MPG"].max()), 0.0, 0.5
@@ -164,6 +170,8 @@ filtered = filtered[
     (filtered["APG"] >= min_apg) &
     (filtered["PORTAL_IMPACT_SCORE"] >= min_impact)
 ]
+if "HT" in filtered.columns:
+    filtered = filtered[filtered["HT"].isna() | (filtered["HT"] >= min_ht)]
 
 
 
@@ -176,7 +184,7 @@ filtered = filtered.sort_values(
 # ==============================
 
 display_cols = [
-    "Player", "CLASS", "HT", "POS_GROUP", "Team", "CONFERENCE",
+    "Player", "CLASS", "HT_display", "POS_GROUP", "Team", "CONFERENCE",
     "TIER_LEVEL", "ROLE", "ARCHETYPE",
     "MPG", "PPG", "HT", "RPG", "APG",
     "PORTAL_IMPACT_SCORE",

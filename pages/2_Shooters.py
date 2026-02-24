@@ -10,12 +10,12 @@ DB_PATH    = "data/portal.db"
 TABLE_NAME = "portal_players"
 
 COLUMN_LABELS = {
-    "TIER_LEVEL":  "Tier",
-    "POS_GROUP":   "Position",
-    "CONFERENCE":  "Conf",
-    "ARCHETYPE":   "Style",
-    "3P%":         "3FG%",
-    "HT":          "HT",
+    "TIER_LEVEL":    "Tier",
+    "POS_GROUP":     "Position",
+    "CONFERENCE":    "Conf",
+    "ARCHETYPE":     "Style",
+    "3P%":           "3FG%",
+    "HT_display":    "HT",
 }
 
 st.set_page_config(
@@ -124,7 +124,7 @@ st.markdown("---")
 # ==============================
 
 display_cols = [
-    "Player", "CLASS", "HT", "POS_GROUP", "Team", "CONFERENCE",
+    "Player", "CLASS", "HT_display", "POS_GROUP", "Team", "CONFERENCE",
     "TIER_LEVEL", "ROLE",
     "MPG", "PPG", "3PM", "3PA", "3P%",
 ]
