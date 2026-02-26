@@ -43,7 +43,7 @@ df["POS_GROUP"] = df["POS_GROUP"].str.capitalize()
 
 st.sidebar.header("Filters")
 
-portal_only = st.sidebar.toggle("Portal players only", value=True)
+portal_only = st.sidebar.toggle("Portal players only", value=False)
 base_df = df[df["PORTAL"] == 1].copy() if portal_only else df.copy()
 
 st.sidebar.markdown("---")

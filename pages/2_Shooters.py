@@ -47,7 +47,7 @@ df["POS_GROUP"] = df["POS_GROUP"].str.capitalize()
 st.sidebar.header("Filters")
 
 # Portal toggle on top
-portal_only = st.sidebar.toggle("Portal players only", value=True)
+portal_only = st.sidebar.toggle("Portal players only", value=False)
 
 st.sidebar.markdown("---")
 

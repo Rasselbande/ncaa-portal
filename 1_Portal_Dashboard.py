@@ -109,16 +109,13 @@ Production stats for players in lower tiers are discounted in the Rank formula t
     """)
 
 # ==============================
-# PORTAL ONLY
-# ==============================
-
-portal_df = df[df["PORTAL"] == 1].copy()
-
-# ==============================
 # SIDEBAR FILTERS
 # ==============================
 
 st.sidebar.header("Filters")
+
+portal_only = st.sidebar.toggle("Portal players only", value=False)
+portal_df = df[df["PORTAL"] == 1].copy() if portal_only else df.copy()
 
 # ── Dropdowns: Tier, Conference, Position, Role, Style ────────────
 tier_options = sorted(portal_df["TIER_LEVEL"].dropna().unique())

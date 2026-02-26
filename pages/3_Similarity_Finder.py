@@ -60,6 +60,10 @@ df_sim, X, features = build_similarity_matrix(df_all)
 
 st.sidebar.header("Search Options")
 
+portal_only = st.sidebar.toggle("Portal players only", value=False)
+
+st.sidebar.markdown("---")
+
 top_n = st.sidebar.slider(
     "Number of similar players",
     min_value=3,
@@ -67,21 +71,33 @@ top_n = st.sidebar.slider(
     value=8
 )
 
-st.sidebar.markdown("---")
-st.sidebar.caption(
-    f"Similarity computed on {len(features)} style features:\n\n"
-    + ", ".join(features)
-)
-
 # ==============================
 # PAGE HEADER
 # ==============================
 
 st.title("🔍 Player Similarity Finder")
-st.markdown(
-    "Search for any player and find the most statistically similar players "
-    "currently in the **Transfer Portal** — matched by playing style."
-)
+
+with st.expander("ℹ️ How does the Similarity Finder work?"):
+    st.markdown("""
+The Similarity Finder compares any player in the database to every other player using **10 style features** — not raw counting stats. This means it matches how a player plays, not just how much they score.
+
+**Features used:**
+- **TS%** — true shooting efficiency
+- **USG%** — usage rate (how often plays run through this player)
+- **3P%** — three-point shooting percentage
+- **AST%** — assist rate
+- **TOV%** — turnover rate
+- **STL%** — steal rate
+- **BLK%** — block rate
+- **TRB%** — total rebound rate
+- **FTR** — free throw rate (how often player draws fouls)
+- **3PATR** — three-point attempt rate (shot selection)
+
+**How it works:** Each player becomes a point in 10-dimensional space. The tool finds the players whose style profile is closest using cosine similarity — the angle between their stat vectors. A score of 100% means identical playing style.
+
+Results are filtered to the **same archetype** first, then ranked by similarity score. Toggle "Portal players only" to restrict results to available players.
+    """)
+
 st.markdown("---")
 
 # ==============================
@@ -117,6 +133,10 @@ sim_scores = cosine_similarity([X[local_idx]], X)[0]
 result = df_sim.copy()
 result["Similarity"] = sim_scores
 result = result[result.index != local_idx]
+
+# Apply portal filter if toggled
+if portal_only:
+    result = result[result["PORTAL"] == 1]
 
 # Restrict to same archetype
 archetype = p.get("ARCHETYPE", None)
