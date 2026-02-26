@@ -225,7 +225,7 @@ st.markdown("---")
 
 if len(result) == 0:
     st.warning(
-        "No portal players found with the same style/archetype. "
+        "No players found with the same style/archetype. "
         "Try a different player or check that clustering ran in your notebook."
     )
     st.stop()
