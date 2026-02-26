@@ -146,8 +146,6 @@ if pd.notna(archetype) and str(archetype) not in ["Unknown", "nan", "None"]:
 else:
     archetype_note = "Style: Unknown — showing all positions"
 
-# Portal only
-result = result[result["PORTAL"] == 1]
 
 # Top N
 result = result.nlargest(top_n, "Similarity")
